@@ -1,0 +1,39 @@
+# File: testingmakefile
+# Author: Ryan Lanciloti
+# Date of Creation: 2/12/2023
+# Description: This makefile will be used to generate and run the tests for the
+# sys_monitor project
+#########################################
+#				PRE-RUN STEPS			#
+#########################################
+SILENCE=@
+
+ifeq "$(CPPUTEST_HOME)" ""
+$(error The environment variable CPPUTEST_HOME is not set. \
+Set it to where cpputest is installed)
+endif
+
+#########################################
+#				PROJECT SETUP			#
+#########################################
+PROJECT_DIR=$(shell pwd)
+
+SRC_DIR=$(PROJECT_DIR)/src
+SRC_FILES=$(SRC_DIR)/console_helper.c
+
+TEST_SRC_DIR=$(PROJECT_DIR)/tests
+TEST_SRC_FILES=$(shell find $(TEST_SRC_DIR) -name '*.c' -or -name '*.cpp')
+
+TEST_DIR=$(PROJECT_DIR)/bins
+TEST_TARGET=bins/sys_monitor_tests
+
+INCLUDE_DIRS += $(PROJECT_DIR)/include
+CPPFLAGS += $(CPPUTEST_HOME)/include
+INCLUDE_DIRS += $(CPPUTEST_HOME)/include/Platforms/Gcc
+LD_LIBRARIES += -L$(CPPUTEST_HOME)/lib -lCppUTest -lCppUTestExt
+
+CPPUTEST_CPPFLAGS += -ggdb
+
+CPPUTEST_WARNINGFLAGS += -Wno-unused-variable
+
+include $(PROJECT_DIR)/tests/MakefileWorker.mk

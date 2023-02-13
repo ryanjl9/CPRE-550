@@ -1,0 +1,19 @@
+PROJECT_DIR=/home/rlanciloti/Github/CPRE-550/project1
+SRC_FILES=server.c
+SRC_DIR=$(PROJECT_DIR)
+INCLUDE_DIRS=$(PROJECT_DIR)
+
+TEST_DIR=$(PROJECT_DIR)
+TEST_SRC_FILES=test_main.cpp test_server.c 
+TEST_SRC_DIRS=$(PROJECT_DIR)
+TEST_TARGET=server_test 
+
+INCLUDE_DIRS += $(CPPUTEST_HOME)/include
+INCLUDE_DIRS += $(CPPUTEST_HOME)/include/Platforms/Gcc
+LD_LIBRARIES += -L$(CPPUTEST_HOME)/lib -lCppUTest -lCppUTestExt
+
+CXXFLAGS += -ggdb
+
+CPPUTEST_WARNINGFLAGS += -Wno-unused-variable
+
+include $(CPPUTEST_HOME)/build/MakefileWorker.mk
