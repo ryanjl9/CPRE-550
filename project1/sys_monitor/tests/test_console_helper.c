@@ -4,14 +4,23 @@
  * Date of Creation: 2/12/2023
  * Description: This file will hold all of the unit tests for the console_helper.c file.
 */
-#define _UNIT_TEST
+#ifndef _UNIT_TEST
+	#define _UNIT_TEST
+#endif
+
 #include <stdio.h>
+#include <stdarg.h>
+#include <string.h>
 #include "CppUTest/TestHarness_c.h"
 #include "CppUTestExt/MockSupport_c.h"
 #include "proj_config.h"
 #include "console_helper.h"
 
-#define DUMMY_FUNC1_TEST_VAL 14
+/* PRIVATE FUNCTION HEADERS*/
+void dummy_func1(char* args[MAX_COMMAND_LINE_LEN], int acnt);
+void dummy_func2(char* args[MAX_COMMAND_LINE_LEN], int acnt);
+void dummy_func3(char* args[MAX_COMMAND_LINE_LEN], int acnt);
+
 int DUMMY_FUNC1_STATE = 0;
 int DUMMY_FUNC2_STATE = 0;
 int DUMMY_FUNC3_STATE = 0;
@@ -24,6 +33,7 @@ int DUMMY_FUNC3_STATE = 0;
  * PARAMS: args - Array containing arguments for the the function
  * PARAMS: acnt - Arguments count 
 */
+#define DUMMY_FUNC1_TEST_VAL 14
 void dummy_func1(char* args[MAX_COMMAND_LINE_LEN], int acnt){
 	DUMMY_FUNC1_STATE = DUMMY_FUNC1_TEST_VAL;
 }
@@ -36,7 +46,7 @@ void dummy_func1(char* args[MAX_COMMAND_LINE_LEN], int acnt){
  * PARAMS: args - Array containing arguments for the the function
  * PARAMS: acnt - Arguments count
  * 
- * EXAMPLE: 'dummy_func2 7' sets DUMMY_FUNC2_STATE = 7
+ * EXAMPLE: dummy_func2 7' sets DUMMY_FUNC2_STATE = 7
 */
 void dummy_func2(char* args[MAX_COMMAND_LINE_LEN], int acnt){
 	if(acnt < 1) return;
@@ -52,7 +62,7 @@ void dummy_func2(char* args[MAX_COMMAND_LINE_LEN], int acnt){
  * PARAMS: args - Array containing arguments for the the function
  * PARAMS: acnt - Arguments count 
  * 
- * EXAMPLE: 'dummy_func3 1 2 3' sets DUMMY_FUNC3_STATE = 6
+ * EXAMPLE: dummy_func3 1 2 3' sets DUMMY_FUNC3_STATE = 6
 */
 void dummy_func3(char* args[MAX_COMMAND_LINE_LEN], int acnt){
 	if(acnt < 1) return;
@@ -89,11 +99,13 @@ menu_item_t _TESTING_ITEMS[_testing_cmds_cnt] = {
 	{"add", "Adds n numbers together `add 4 5`", (void*)&dummy_func3, nullptr, 0}
 };
 
+/* CPPUTESTS */
 TEST_GROUP_C_SETUP(console_helper_tests){
 	ch_reset();
 	DUMMY_FUNC1_STATE = 0;
 	DUMMY_FUNC2_STATE = 0;
 	DUMMY_FUNC3_STATE = 0;
+	CLEAR_BUFFER(PRINTF_TEST_BUFFER)
 }
 
 TEST_GROUP_C_TEARDOWN(console_helper_tests){
@@ -125,12 +137,20 @@ TEST_C(console_helper_tests, console_init_null_params){
 TEST_C(console_helper_tests, print_intro_null){
 	uint8_t retval = ch_print_introduction();
 	CHECK_EQUAL_C_INT(retval, CH_PRINT_INTRO_MSG_NULL);
+	CHECK_EQUAL_C_STRING(
+		PRINTF_TEST_BUFFER, 
+		"Introduction message not specified. Make sure to call ch_init()."
+	);
 }
 
 TEST_C(console_helper_tests, print_intro_valid){
 	INTRO_MSG = "Test";
 	uint8_t retval = ch_print_introduction();
 	CHECK_EQUAL_C_INT(retval, CH_PRINT_INTRO_NO_ERROR);
+	CHECK_EQUAL_C_STRING(
+		PRINTF_TEST_BUFFER, 
+		"Test"
+	);
 }
 
 /* ch_execute tests*/

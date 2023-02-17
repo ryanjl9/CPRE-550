@@ -1,8 +1,6 @@
 /**
  * This file will be used for testing server.c
 */
-//#define _UNIT_TEST
-#define _UNIT_TEST
 #include <rpc/rpc.h>
 #include "CppUTest/TestHarness_c.h"
 #include "CppUTestExt/MockSupport_c.h"

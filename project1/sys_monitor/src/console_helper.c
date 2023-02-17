@@ -8,7 +8,6 @@
 #include <stdio.h>
 #include <string.h>
 #include "console_helper.h"
-#include "proj_config.h"
 
 /* GLOBAL STATE VARIABLES */
 char* INTRO_MSG = nullptr;
@@ -126,14 +125,14 @@ uint8_t _ch_execute_helper(
 				char* token = strtok(NULL, " ");
 				return _ch_execute_helper(
 					&(cmd_name_lst[1]), 
-					args_cnt-1, 
+					args_cnt - 1, 
 					cmd->sub_cmds, 
 					cmd->sub_cmd_cnt
 				);
 			}
 			if(cur_menu[menu_entry].cback_func != nullptr) {
-				if(args_cnt >= 1) (*(cmd->cback_func))(&(cmd_name_lst[1]), args_cnt-1);
-				else (*(cmd->cback_func))(nullptr, args_cnt-1);
+				if(args_cnt >= 1) (*(cmd->cback_func))(&(cmd_name_lst[1]), args_cnt - 1);
+				else (*(cmd->cback_func))(nullptr, args_cnt - 1);
 			}
 			return CH_EXECUTE_NO_ERROR;
 		}

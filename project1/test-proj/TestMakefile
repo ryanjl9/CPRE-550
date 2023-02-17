@@ -12,7 +12,7 @@ INCLUDE_DIRS += $(CPPUTEST_HOME)/include
 INCLUDE_DIRS += $(CPPUTEST_HOME)/include/Platforms/Gcc
 LD_LIBRARIES += -L$(CPPUTEST_HOME)/lib -lCppUTest -lCppUTestExt
 
-CXXFLAGS += -ggdb
+CXXFLAGS += -ggdb -D_UNIT_TEST
 
 CPPUTEST_WARNINGFLAGS += -Wno-unused-variable
 

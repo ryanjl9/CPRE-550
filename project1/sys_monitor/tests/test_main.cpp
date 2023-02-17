@@ -13,6 +13,17 @@ TEST_GROUP_C_WRAPPER(console_helper_tests){
 	TEST_GROUP_C_TEARDOWN_WRAPPER(console_helper_tests);
 };
 
+TEST_GROUP_C_WRAPPER(mock_functions_tests){
+	TEST_GROUP_C_SETUP_WRAPPER(mock_functions_tests);
+	TEST_GROUP_C_TEARDOWN_WRAPPER(mock_functions_tests);
+};
+
+TEST_GROUP_C_WRAPPER(clnt_commands_tests){
+	TEST_GROUP_C_SETUP_WRAPPER(clnt_commands_tests);
+	TEST_GROUP_C_TEARDOWN_WRAPPER(clnt_commands_tests);
+};
+
+/* console_helper_tests */
 TEST_C_WRAPPER(console_helper_tests, console_init_null_params);
 
 TEST_C_WRAPPER(console_helper_tests, print_intro_null)
@@ -28,8 +39,32 @@ TEST_C_WRAPPER(console_helper_tests, ch_execute_cmd_action_no_submenu)
 TEST_C_WRAPPER(console_helper_tests, ch_execute_cmd_add_1)
 TEST_C_WRAPPER(console_helper_tests, ch_execute_cmd_add_2)
 TEST_C_WRAPPER(console_helper_tests, ch_execute_cmd_add_3)
-
 TEST_C_WRAPPER(console_helper_tests, ch_reset_verify)
+
+/* mock_function_tests */
+TEST_C_WRAPPER(mock_functions_tests, scanf_one_argument)
+TEST_C_WRAPPER(mock_functions_tests, scanf_one_multiple_arguments)
+
+TEST_C_WRAPPER(mock_functions_tests, printf_mock_test_noargs)
+TEST_C_WRAPPER(mock_functions_tests, printf_mock_test_args_multiple_lines)
+
+/* clnt_commands_tests */
+TEST_C_WRAPPER(clnt_commands_tests, server_list_no_items)
+TEST_C_WRAPPER(clnt_commands_tests, server_list_multiple_items)
+TEST_C_WRAPPER(clnt_commands_tests, server_add_incorrect_number_of_parameters)
+TEST_C_WRAPPER(clnt_commands_tests, server_add_max_capacity)
+TEST_C_WRAPPER(clnt_commands_tests, server_add_server_doesnt_exists)
+TEST_C_WRAPPER(clnt_commands_tests, server_add_server_exists)
+TEST_C_WRAPPER(clnt_commands_tests, server_remove_incorrect_number_of_parameters)
+TEST_C_WRAPPER(clnt_commands_tests, server_remove_no_servers)
+TEST_C_WRAPPER(clnt_commands_tests, server_remove_invalid_index)
+TEST_C_WRAPPER(clnt_commands_tests, server_remove_valid_entry_single)
+TEST_C_WRAPPER(clnt_commands_tests, server_remove_selected_server1)
+TEST_C_WRAPPER(clnt_commands_tests, server_remove_selected_server2)
+TEST_C_WRAPPER(clnt_commands_tests, server_remove_selected_server3)
+TEST_C_WRAPPER(clnt_commands_tests, server_select_incorrect_number_of_parameters)
+TEST_C_WRAPPER(clnt_commands_tests, server_select_bad_index)
+TEST_C_WRAPPER(clnt_commands_tests, server_select_valid_index)
 
 int main(int argc, char** argv){
 	return RUN_ALL_TESTS(argc, argv);

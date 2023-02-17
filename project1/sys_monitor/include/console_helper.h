@@ -7,16 +7,15 @@
 */
 #ifndef _CONSOLE_HELPER_H
 #define _CONSOLE_HELPER_H
-#include "proj_config.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/* DEFINES */
-#define MAX_COMMAND_ARGS 25
-#define MAX_COMMAND_LINE_LEN 25
-#define GET_PARAM_X(arr, index) ((char*)arr + MAX_COMMAND_LINE_LEN * index)
+#include "proj_config.h"
+
+#ifdef _UNIT_TEST
+#include "mock_functions.h"
+#endif //_UNIT_TEST
 
 /* STRUCTS */
 typedef struct menu_item_t menu_item_t;
@@ -52,6 +51,11 @@ typedef enum {
 	CH_EXECUTE_MENU_NULLPTR,
 	CH_EXECUTE_CMD_DOESNT_EXIST
 } ch_execute_erros;
+
+typedef enum {
+	CH_PH_NO_ERROR = 0,
+
+} ch_print_help_errors;
 
 /* MESSAGES */
 #ifdef _UNIT_TEST

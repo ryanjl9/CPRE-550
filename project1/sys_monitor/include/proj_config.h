@@ -6,13 +6,28 @@
 */
 #ifndef _CONFIG_H
 #define _CONFIG_H
-#include <stdint.h>
-#include <stdlib.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#include <stdint.h>
+#include <stdlib.h>
+
+/* DEFINES */
 #define nullptr 0
+#ifndef FALSE
+	#define FALSE 0
+#endif //FALSE
+
+#ifndef TRUE 
+	#define TRUE 1
+#endif //TRUE
+
+#define MAX_COMMAND_ARGS 25
+#define MAX_COMMAND_LINE_LEN 50
+#define MAX_SERVER_NAME_LEN 50
+#define MAX_SERVER_CNT 10
 
 #ifdef __cplusplus
 }

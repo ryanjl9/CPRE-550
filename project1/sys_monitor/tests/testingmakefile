@@ -19,7 +19,7 @@ endif
 PROJECT_DIR=$(shell pwd)
 
 SRC_DIR=$(PROJECT_DIR)/src
-SRC_FILES=$(SRC_DIR)/console_helper.c
+SRC_FILES=$(SRC_DIR)/console_helper.c $(SRC_DIR)/clnt_commands.c
 
 TEST_SRC_DIR=$(PROJECT_DIR)/tests
 TEST_SRC_FILES=$(shell find $(TEST_SRC_DIR) -name '*.c' -or -name '*.cpp')
@@ -32,7 +32,7 @@ CPPFLAGS += $(CPPUTEST_HOME)/include
 INCLUDE_DIRS += $(CPPUTEST_HOME)/include/Platforms/Gcc
 LD_LIBRARIES += -L$(CPPUTEST_HOME)/lib -lCppUTest -lCppUTestExt
 
-CPPUTEST_CPPFLAGS += -ggdb
+CPPUTEST_CPPFLAGS += -ggdb  -D_UNIT_TEST
 
 CPPUTEST_WARNINGFLAGS += -Wno-unused-variable
 
