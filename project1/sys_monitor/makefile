@@ -11,13 +11,13 @@ INCLUDE_DIR = ./include
 SRC_DIR = ./src
 OBJ_DIR = ./objs
 BIN_DIR = ./bins
+LIB_DIR = ./lib
 
 #########################################
 # 				  FILES					#
 #########################################
 INCLUDE_FILES = $(shell find $(INCLUDE_DIR) -name '*.h')
 SRC_FILES = $(shell find $(SRC_DIR) -name '*.c')
-OBJ_FILES = $(SRC_FILES:%=$(OBJ_DIR)/%.o)
 
 #########################################
 #				 BINARIES				#
@@ -28,22 +28,52 @@ CLIENT_BIN = $(BIN_DIR)/client
 #########################################
 #			BUILD PLACEHOLDER			#
 #########################################
-client_objects = 
-server_objects = 
+_CLIENT_OBJECTS = client clnt_commands console_helper sys_monitor_clnt sys_monitor_xdr
+CLIENT_OBJECTS = $(_CLIENT_OBJECTS:%=$(OBJ_DIR)/%.o)
+CLIENT_SRCS = $(_CLIENT_OBJECTS:%=$(SRC_DIR)/%.c)
+
+SERVER_OBJECTS = 
 
 #########################################
 #			 COMPILER FLAGS				#
 #########################################
 # Enable to generate symbols for GDB
-CFLAGS += -ggdb
+CFLAGS += -Wall
+CFLAGS += -Wextra
+CFLAGS += -Werror=format-security
+CFLAGS += -Werror=implicit-function-declaration
+CFLAGS += -Wfloat-equal
+CFLAGS += -Wundef
+CFLAGS += -Wshadow
+CFLAGS += -Wpointer-arith
+CFLAGS += -Wstrict-prototypes
+CFLAGS += -Wstrict-overflow=5
+CFLAGS += -Wwrite-strings
+CFLAGS += -Wformat=2
 
 #########################################
 #				TARGETS					#
 #########################################
 
+$(OBJ_DIR)/%.o : $(SRC_DIR)/%.c $(INCLUDE_FILES) | objs_dir
+	gcc -c -o $@ $< $(CFLAGS) -I$(INCLUDE_DIR)
+
+client: $(CLIENT_OBJECTS) $(INCLUDE_FILES) | bin_dir
+	gcc -o $(BIN_DIR)/$@ $^ -I$(INCLUDE_DIR) $(CFLAGS) -O2
+
+client_dbg: $(CLIENT_SRCS) $(INCLUDE_FILES) | bin_dir
+	gcc -o $(BIN_DIR)/$@ $^ -I$(INCLUDE_DIR) $(CFLAGS) -ggdb
+
+.PHONY: bin_dir
+bin_dir:
+	mkdir -p $(BIN_DIR)
+
+.PHONY: objs_dir
+objs_dir:
+	mkdir -p $(OBJ_DIR)
+
 .PHONY: all
-all:
-	@echo ALL
+all: test client
 
 .PHONY: test
 test:
@@ -51,10 +81,10 @@ test:
 
 .PHONY: clean
 clean: 
-	@rm -rf $(OBJ_DIR) $(BIN_DIR)
+	@rm -rf $(OBJ_DIR) $(BIN_DIR) $(LIB_DIR)
 	@make -f tests/testingmakefile realclean
 
 .PHONY: clean-verbose
 clean-verbose: 
-	rm -rf $(OBJ_DIR) $(BIN_DIR)
+	rm -rf $(OBJ_DIR) $(BIN_DIR) $(LIB_DIR)
 	make -f tests/testingmakefile realclean

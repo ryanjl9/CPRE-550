@@ -9,6 +9,8 @@
 #define _CLNT__COMMANDS_H
 #include <rpc/rpc.h>
 #include "proj_config.h"
+#include "console_helper.h"
+#include "sys_monitor.h"
 
 #ifdef _UNIT_TEST
 #include "mock_functions.h"
@@ -26,23 +28,32 @@ typedef struct {
 #endif //clnt_destroy
 extern server_info_t SERVERS[MAX_SERVER_CNT];
 extern uint8_t SERVER_CNT;
-extern uint8_t CURRENT_SERVER_INDEX;
+extern uint8_t CUR_SVR_INDEX;
+
+/* general */
+extern const char* NO_SERVER_SELECTED;
+extern const char* INVALID_INDEX;
 
 /* server_list */
 extern const char* LIST_NO_SERVERS;
 
 /* server_add */
-extern const char* ADD_BAD_ARGS;
 extern const char* SVR_CAP_MAX;
 
 /* server_remove */
-extern const char* RMV_BAD_ARGS;
 extern const char* RMV_NO_SERVERS;
-extern const char* RMV_INVALID_INDEX;
 
-/* server_select */
-extern const char* SEL_BAD_ARGS;
-extern const char* SEL_INVALID_INDEX;
+/* get_datetime */
+extern const char* DT_INVALID_ARG;
+
+#endif //_UNIT_TEST
+
+#ifndef _UNIT_TEST
+	#define getdatetime(argp, clnt) getdatetime_1(argp, clnt)
+	#define getsysteminfo(argp, clnt) getsysteminfo_1(argp, clnt)
+	#define getmemoryutilization(argp, clnt) getmemoryutilization_1(argp, clnt)
+	#define getloadprocsperminute(argp, clnt) getloadprocsperminute_1(argp, clnt)
+	#define getusernames(argp, clnt) getusernames_1(argp, clnt)
 #endif //_UNIT_TEST
 
 /* PUBLIC FUNCTIONS */
@@ -50,5 +61,11 @@ extern void server_list(char* args[MAX_COMMAND_LINE_LEN], int acnt);
 extern void server_add(char* args[MAX_COMMAND_LINE_LEN], int acnt);
 extern void server_remove(char* args[MAX_COMMAND_LINE_LEN], int acnt);
 extern void server_select(char* args[MAX_COMMAND_LINE_LEN], int acnt);
+
+extern void get_datetime(char* args[MAX_COMMAND_LINE_LEN], int acnt);
+extern void get_systeminfo(char* args[MAX_COMMAND_LINE_LEN], int acnt);
+extern void get_memoryutilization(char* args[MAX_COMMAND_LINE_LEN], int acnt);
+extern void get_loadinfo(char* args[MAX_COMMAND_LINE_LEN], int acnt);
+extern void get_usernames(char* args[MAX_COMMAND_LINE_LEN], int acnt);
 
 #endif //_CLNT__COMMANDS_H

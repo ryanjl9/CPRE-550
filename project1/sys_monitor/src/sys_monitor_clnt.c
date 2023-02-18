@@ -24,15 +24,15 @@ getdatetime_1(enum dt_ops_t *argp, CLIENT *clnt)
 	return (&clnt_res);
 }
 
-struct sysinfo *
+struct sysinfo_c *
 getsysteminfo_1(void *argp, CLIENT *clnt)
 {
-	static struct sysinfo clnt_res;
+	static struct sysinfo_c clnt_res;
 
 	memset((char *)&clnt_res, 0, sizeof(clnt_res));
 	if (clnt_call (clnt, GetSystemInfo,
 		(xdrproc_t) xdr_void, (caddr_t) argp,
-		(xdrproc_t) xdr_sysinfo, (caddr_t) &clnt_res,
+		(xdrproc_t) xdr_sysinfo_c, (caddr_t) &clnt_res,
 		TIMEOUT) != RPC_SUCCESS) {
 		return (NULL);
 	}

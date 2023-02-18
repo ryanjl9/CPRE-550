@@ -4,10 +4,6 @@
  * Date of Creation: 2/12/2023
  * Description: This file will hold all of the unit tests for the console_helper.c file.
 */
-#ifndef _UNIT_TEST
-	#define _UNIT_TEST
-#endif
-
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
@@ -26,22 +22,20 @@ int DUMMY_FUNC2_STATE = 0;
 int DUMMY_FUNC3_STATE = 0;
 
 /**
- * FUNCTION: dummy_func1
- * 
- * DESCRIPTION: Sets a state variable to a known value
+ * @brief: Sets a state variable to a known value
  * 
  * PARAMS: args - Array containing arguments for the the function
  * PARAMS: acnt - Arguments count 
 */
 #define DUMMY_FUNC1_TEST_VAL 14
 void dummy_func1(char* args[MAX_COMMAND_LINE_LEN], int acnt){
+	(void)args;
+	(void)acnt;
 	DUMMY_FUNC1_STATE = DUMMY_FUNC1_TEST_VAL;
 }
 
 /**
- * FUNCTION: dummy_func2
- * 
- * DESCRIPTION: Sets a state variable to a passed in parameter
+ * @brief: Sets a state variable to a passed in parameter
  * 
  * PARAMS: args - Array containing arguments for the the function
  * PARAMS: acnt - Arguments count
@@ -55,9 +49,7 @@ void dummy_func2(char* args[MAX_COMMAND_LINE_LEN], int acnt){
 }
 
 /**
- * FUNCTION: dummy_func3
- * 
- * DESCRIPTION: Sets a state variable to the sum off all parameters
+ * @brief: Sets a state variable to the sum off all parameters
  * 
  * PARAMS: args - Array containing arguments for the the function
  * PARAMS: acnt - Arguments count 
@@ -105,6 +97,7 @@ TEST_GROUP_C_SETUP(console_helper_tests){
 	DUMMY_FUNC1_STATE = 0;
 	DUMMY_FUNC2_STATE = 0;
 	DUMMY_FUNC3_STATE = 0;
+	EXIT_STATUS = -1;
 	CLEAR_BUFFER(PRINTF_TEST_BUFFER)
 }
 
@@ -120,31 +113,37 @@ TEST_C(console_helper_tests, console_init_null_params){
 	CHECK_EQUAL_C_INT(retval, CH_INIT_ITEM_CNT_MENU_ITEMS_INTRO_MSG_NULL);
 	ch_reset();
 
-	retval = ch_init("TEST", nullptr, 0);
+	char name[] = "TEST";
+	retval = ch_init(name, nullptr, 0);
 	CHECK_EQUAL_C_INT(retval, CH_INIT_ITEM_CNT_MENU_ITEMS_ITEMS_NULL);
 	ch_reset();
 
 	retval = ch_init(nullptr, &test_menu_item, _testing_cmds_cnt);
-	CHECK_EQUAL_C_INT(retval, 1);
+	CHECK_EQUAL_C_INT(retval, CH_INIT_INTRO_MSG_NULL);
 	ch_reset();
 
-	retval = ch_init("TEST", &test_menu_item, _testing_cmds_cnt);
-	CHECK_EQUAL_C_INT(retval, 0);
+	retval = ch_init(name, &test_menu_item, _testing_cmds_cnt);
+	CHECK_EQUAL_C_INT(retval, CH_INIT_NO_ERROR);
 	ch_reset();
+}
+
+TEST_C(console_helper_tests, ch_init_oversized_msg){
+	menu_item_t test_menu_item = {"NAME", "HELP", nullptr, nullptr, 0};
+	char test_msg[1025];
+	memset(test_msg, 0x41, 1024);
+	int retval = ch_init(test_msg, &test_menu_item, _testing_cmds_cnt);
+	CHECK_EQUAL_C_INT(retval, CH_INIT_BAD_INTRO_MSG);
 }
 
 /* ch_print_introduction tests */
 TEST_C(console_helper_tests, print_intro_null){
 	uint8_t retval = ch_print_introduction();
 	CHECK_EQUAL_C_INT(retval, CH_PRINT_INTRO_MSG_NULL);
-	CHECK_EQUAL_C_STRING(
-		PRINTF_TEST_BUFFER, 
-		"Introduction message not specified. Make sure to call ch_init()."
-	);
+	CHECK_EQUAL_C_STRING(PRINTF_TEST_BUFFER, NULL_INTRO_MESSAGE);
 }
 
 TEST_C(console_helper_tests, print_intro_valid){
-	INTRO_MSG = "Test";
+	strcpy(INTRO_MSG, "Test");
 	uint8_t retval = ch_print_introduction();
 	CHECK_EQUAL_C_INT(retval, CH_PRINT_INTRO_NO_ERROR);
 	CHECK_EQUAL_C_STRING(
@@ -160,12 +159,14 @@ TEST_C(console_helper_tests, ch_execute_nullptr_arg){
 }
 
 TEST_C(console_helper_tests, ch_execute_nullptr_menu_items){
-	uint8_t retval = ch_execute("help");
+	char cmd[] = "help";
+	uint8_t retval = ch_execute(cmd);
 	CHECK_EQUAL_C_INT(retval, CH_EXECUTE_MENU_NULLPTR);
 }
 
 TEST_C(console_helper_tests, ch_execute_cmd_doesnt_exist){
-	uint8_t retval = ch_init("TEST", _TESTING_ITEMS, _testing_cmds_cnt);
+	char name[] = "TEST";
+	uint8_t retval = ch_init(name, _TESTING_ITEMS, _testing_cmds_cnt);
 	CHECK_EQUAL_C_INT(retval, CH_INIT_NO_ERROR);
 
 	char cmd[] = "help";
@@ -174,7 +175,8 @@ TEST_C(console_helper_tests, ch_execute_cmd_doesnt_exist){
 }
 
 TEST_C(console_helper_tests, ch_execute_cmd_doesnt_do_anything){
-	uint8_t retval = ch_init("TEST", _TESTING_ITEMS, _testing_cmds_cnt);
+	char name[] = "TEST";
+	uint8_t retval = ch_init(name, _TESTING_ITEMS, _testing_cmds_cnt);
 	CHECK_EQUAL_C_INT(retval, CH_INIT_NO_ERROR);
 
 	char cmd[] = "entry1";
@@ -183,7 +185,8 @@ TEST_C(console_helper_tests, ch_execute_cmd_doesnt_do_anything){
 }
 
 TEST_C(console_helper_tests, ch_execute_cmd_submenu_cmd_no_param){
-	uint8_t retval = ch_init("TEST", _TESTING_ITEMS, _testing_cmds_cnt);
+	char name[] = "TEST";
+	uint8_t retval = ch_init(name, _TESTING_ITEMS, _testing_cmds_cnt);
 	CHECK_EQUAL_C_INT(retval, CH_INIT_NO_ERROR);
 
 	char cmd[] = "entry2 subentry1";
@@ -193,7 +196,8 @@ TEST_C(console_helper_tests, ch_execute_cmd_submenu_cmd_no_param){
 }
 
 TEST_C(console_helper_tests, ch_execute_cmd_submenu_cmd_with_param){
-	uint8_t retval = ch_init("TEST", _TESTING_ITEMS, _testing_cmds_cnt);
+	char name[] = "TEST";
+	uint8_t retval = ch_init(name, _TESTING_ITEMS, _testing_cmds_cnt);
 	CHECK_EQUAL_C_INT(retval, CH_INIT_NO_ERROR);
 
 	char cmd[] = "entry2 subentry2 42";
@@ -203,7 +207,8 @@ TEST_C(console_helper_tests, ch_execute_cmd_submenu_cmd_with_param){
 }
 
 TEST_C(console_helper_tests, ch_execute_cmd_action_no_submenu){
-	uint8_t retval = ch_init("TEST", _TESTING_ITEMS, _testing_cmds_cnt);
+	char name[] = "TEST";
+	uint8_t retval = ch_init(name, _TESTING_ITEMS, _testing_cmds_cnt);
 	CHECK_EQUAL_C_INT(retval, CH_INIT_NO_ERROR);
 
 	char cmd[] = "entry3 83";
@@ -213,7 +218,8 @@ TEST_C(console_helper_tests, ch_execute_cmd_action_no_submenu){
 }
 
 TEST_C(console_helper_tests, ch_execute_cmd_add_1){
-	uint8_t retval = ch_init("TEST", _TESTING_ITEMS, _testing_cmds_cnt);
+	char name[] = "TEST";
+	uint8_t retval = ch_init(name, _TESTING_ITEMS, _testing_cmds_cnt);
 	CHECK_EQUAL_C_INT(retval, CH_INIT_NO_ERROR);
 
 	char cmd[] = "add 1";
@@ -223,7 +229,8 @@ TEST_C(console_helper_tests, ch_execute_cmd_add_1){
 }
 
 TEST_C(console_helper_tests, ch_execute_cmd_add_2){
-	uint8_t retval = ch_init("TEST", _TESTING_ITEMS, _testing_cmds_cnt);
+	char name[] = "TEST";
+	uint8_t retval = ch_init(name, _TESTING_ITEMS, _testing_cmds_cnt);
 	CHECK_EQUAL_C_INT(retval, CH_INIT_NO_ERROR);
 
 	char cmd[] = "add 1 3";
@@ -233,7 +240,8 @@ TEST_C(console_helper_tests, ch_execute_cmd_add_2){
 }
 
 TEST_C(console_helper_tests, ch_execute_cmd_add_3){
-	uint8_t retval = ch_init("TEST", _TESTING_ITEMS, _testing_cmds_cnt);
+	char name[] = "TEST";
+	uint8_t retval = ch_init(name, _TESTING_ITEMS, _testing_cmds_cnt);
 	CHECK_EQUAL_C_INT(retval, CH_INIT_NO_ERROR);
 
 	char cmd[] = "add 1 3 5 7";
@@ -244,13 +252,74 @@ TEST_C(console_helper_tests, ch_execute_cmd_add_3){
 
 /* ch_reset tests */
 TEST_C(console_helper_tests, ch_reset_verify){
-	INTRO_MSG = "Test";
+	strcpy(INTRO_MSG,"Test");
 	MENU_ITEMS = _TESTING_ITEMS;
 
 	CHECK_EQUAL_C_STRING(INTRO_MSG, "Test");
 	CHECK_EQUAL_C_POINTER(MENU_ITEMS, _TESTING_ITEMS);
 	ch_reset();
 
-	CHECK_EQUAL_C_POINTER(INTRO_MSG, nullptr);
+	CHECK_EQUAL_C_INT(INTRO_MSG[0], 0);
 	CHECK_EQUAL_C_POINTER(MENU_ITEMS, nullptr);
+}
+
+/* ch_help tests*/
+TEST_C(console_helper_tests, ch_help_no_cmds){
+	ch_help(nullptr, 0);
+	CHECK_EQUAL_C_STRING(NO_MENU_ITEMS, PRINTF_TEST_BUFFER);
+}
+
+TEST_C(console_helper_tests, ch_help_no_args){
+	char name[] = "TEST";
+	uint8_t retval = ch_init(name, _TESTING_ITEMS, _testing_cmds_cnt);
+	const char* expected_output = "entry1 - Test Command 1\nentry2* - Test Command 2\n"
+								  "entry3 - Test Command 3\n"
+								  "add - Adds n numbers together `add 4 5`\n\n";
+	MENU_ITEMS = _TESTING_ITEMS;
+	ch_help(nullptr, 0);
+	CHECK_EQUAL_C_STRING(expected_output, PRINTF_TEST_BUFFER);
+}
+
+TEST_C(console_helper_tests, ch_help_show_subcommands){
+	char name[] = "TEST";
+	uint8_t retval = ch_init(name, _TESTING_ITEMS, _testing_cmds_cnt);
+	
+	const char* expected_output = "subentry1 - Subentry Command 1\n"
+								  "subentry2 - Subentry Command 2\n\n";
+	char cmd_param[1][MAX_COMMAND_LINE_LEN] = {"entry2"};
+	
+	ch_help((char**)(&cmd_param[0]), 1);
+	CHECK_EQUAL_C_STRING(expected_output, PRINTF_TEST_BUFFER);
+}
+
+TEST_C(console_helper_tests, ch_help_show_subcommands_no_subcommand){
+	char name[] = "TEST";
+	uint8_t retval = ch_init(name, _TESTING_ITEMS, _testing_cmds_cnt);
+	
+	char cmd_param[1][MAX_COMMAND_LINE_LEN] = {"entry1"};
+	
+	ch_help((char**)(&cmd_param[0]), 1);
+	CHECK_EQUAL_C_STRING(NO_SUB_COMMND, PRINTF_TEST_BUFFER);
+}
+
+TEST_C(console_helper_tests, ch_help_bad_command){
+	char name[] = "TEST";
+	uint8_t retval = ch_init(name, _TESTING_ITEMS, _testing_cmds_cnt);
+	
+	char cmd_param[1][MAX_COMMAND_LINE_LEN] = {"entry4"};
+	
+	ch_help((char**)(&cmd_param[0]), 1);
+	CHECK_EQUAL_C_STRING(BAD_COMMAND, PRINTF_TEST_BUFFER);
+}
+
+/* ch_quit tests*/
+TEST_C(console_helper_tests, ch_quit_bad_args){
+	ch_quit(nullptr, 1);
+	CHECK_EQUAL_C_STRING(BAD_ARGS, PRINTF_TEST_BUFFER);
+}
+
+/* ch_quit tests*/
+TEST_C(console_helper_tests, ch_quit_valid){
+	ch_quit(nullptr, 0);
+	CHECK_EQUAL_C_INT(0, EXIT_STATUS);
 }

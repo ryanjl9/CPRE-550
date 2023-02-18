@@ -17,7 +17,7 @@ xdr_load_procs_ret (XDR *xdrs, load_procs_ret objp)
 }
 
 bool_t
-xdr_user_list_t (XDR *xdrs, user_list_t *objp)
+xdr_user_name_t (XDR *xdrs, user_name_t *objp)
 {
 	register int32_t *buf;
 
@@ -27,7 +27,17 @@ xdr_user_list_t (XDR *xdrs, user_list_t *objp)
 }
 
 bool_t
-xdr_sysinfo (XDR *xdrs, sysinfo *objp)
+xdr_user_list_t (XDR *xdrs, user_list_t *objp)
+{
+	register int32_t *buf;
+
+	 if (!xdr_pointer (xdrs, (char **)objp, sizeof (user_name_t), (xdrproc_t) xdr_user_name_t))
+		 return FALSE;
+	return TRUE;
+}
+
+bool_t
+xdr_sysinfo_c (XDR *xdrs, sysinfo_c *objp)
 {
 	register int32_t *buf;
 
@@ -151,7 +161,7 @@ xdr_sysinfo (XDR *xdrs, sysinfo *objp)
 }
 
 bool_t
-xdr_mallinfo (XDR *xdrs, mallinfo *objp)
+xdr_mallinfo_c (XDR *xdrs, mallinfo_c *objp)
 {
 	register int32_t *buf;
 
@@ -258,7 +268,7 @@ xdr_mem_usage_ret (XDR *xdrs, mem_usage_ret *objp)
 {
 	register int32_t *buf;
 
-	 if (!xdr_mallinfo (xdrs, &objp->dynamic_memory_usage))
+	 if (!xdr_mallinfo_c (xdrs, &objp->dynamic_memory_usage))
 		 return FALSE;
 	 if (!xdr_int (xdrs, &objp->page_size))
 		 return FALSE;

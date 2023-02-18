@@ -32,7 +32,19 @@ CPPFLAGS += $(CPPUTEST_HOME)/include
 INCLUDE_DIRS += $(CPPUTEST_HOME)/include/Platforms/Gcc
 LD_LIBRARIES += -L$(CPPUTEST_HOME)/lib -lCppUTest -lCppUTestExt
 
-CPPUTEST_CPPFLAGS += -ggdb  -D_UNIT_TEST
+CPPUTEST_CPPFLAGS += -ggdb -D_UNIT_TEST
+CPPUTEST_CPPFLAGS += -Wall
+CPPUTEST_CPPFLAGS += -Wextra
+CPPUTEST_CPPFLAGS += -Werror=format-security
+CPPUTEST_CFLAGS += -Werror=implicit-function-declaration
+CPPUTEST_CPPFLAGS += -Wfloat-equal
+CPPUTEST_CPPFLAGS += -Wundef
+CPPUTEST_CPPFLAGS += -Wshadow
+CPPUTEST_CPPFLAGS += -Wpointer-arith
+CPPUTEST_CFLAGS += -Wstrict-prototypes
+CPPUTEST_CPPFLAGS += -Wstrict-overflow=5
+CPPUTEST_CPPFLAGS += -Wwrite-strings
+CPPUTEST_CPPFLAGS += -Wformat=2
 
 CPPUTEST_WARNINGFLAGS += -Wno-unused-variable
 

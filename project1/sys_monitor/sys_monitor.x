@@ -18,10 +18,11 @@ const MAX_USERNAMES = 255;
 
 /* TYPEDEFS */
 typedef double load_procs_ret[3]; 			/* GetLoadProcsPerMinute return value */ 
-typedef string user_list_t<MAX_USERNAMES>;	/* Array type for the users on the remote machine */
+typedef string user_name_t<MAX_USERNAMES>;	/* Typedef for the usernames */
+typedef user_name_t* user_list_t;			/* Array type for the users on the remote machine */
 
 /* STRUCTS */
-struct sysinfo {				/* Struct returned by sysinfo call */
+struct sysinfo_c {				/* Struct returned by sysinfo call */
 	long uptime;              	/* Seconds since boot */
 	unsigned long loads[3];   	/* 1, 5, and 15 minute load averages */
 	unsigned long totalram;   	/* Total usable main memory size */
@@ -34,7 +35,7 @@ struct sysinfo {				/* Struct returned by sysinfo call */
 	char _f[22];              	/* Pads structure to 64 bytes */
 };
 
-struct mallinfo {	/* Struct returned by mallinfo call */
+struct mallinfo_c {	/* Struct returned by mallinfo call */
   int arena;    	/* non-mmapped space allocated from system */
   int ordblks;  	/* number of free chunks */
   int smblks;   	/* number of fastbin blocks */
@@ -48,7 +49,7 @@ struct mallinfo {	/* Struct returned by mallinfo call */
 };
 
 struct mem_usage_ret {						/* Struct returned by GetMemoryUtilization*/
-	struct mallinfo dynamic_memory_usage;	/* Struct containing info about dynamic memory usage */
+	struct mallinfo_c dynamic_memory_usage;	/* Struct containing info about dynamic memory usage */
 	int page_size;							/* Page size of the remote machine */
 	long phys_page_cnt;						/* Number of physical pages on the remote machine */
 	long available_phys_page_cnt;			/* Number of free physical pages on the remote machine */
@@ -77,7 +78,7 @@ enum load_time_map_t{	/* Enum used to parse the average load times */
 program SYS_MONITOR {
 	version SYS_MONITOR_VERSION {
 		string GetDateTime(enum dt_ops_t) = 1;
-		struct sysinfo GetSystemInfo(void) = 2;
+		struct sysinfo_c GetSystemInfo(void) = 2;
 		struct mem_usage_ret GetMemoryUtilization(void) = 3;
 		load_procs_ret GetLoadProcsPerMinute(void) = 4;
 		struct user_info GetUsernames(void) = 5;

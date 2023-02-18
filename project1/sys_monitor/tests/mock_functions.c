@@ -15,6 +15,13 @@
 /* GLOBAL VARIABLES */
 char* PRINTF_TEST_BUFFER = nullptr;
 char SCANF_TEST_BUFFER[MAX_COMMAND_LINE_LEN] = {0};
+int EXIT_STATUS = -1;
+
+char GET_DATETIME_MOCK_RETVAL[GETDATETIME_MOCK_RETVAL_SIZE];
+struct sysinfo GET_SYSTEM_INFO_MOCK_RETVAL;
+struct mem_usage_ret GET_MEMORY_UTILIZATION_MOCK_RETVAL;
+double* GET_LOAD_PROCS_PER_MINUTE_MOCK_RETVAL;
+struct user_info GET_USERNAMES_MOCK_RETVAL;
 
 /* PRIVATE FUNCTION HEADERS*/
 void _add_to_buffer(char** dst, char* src);
@@ -23,11 +30,11 @@ void _add_to_buffer(char** dst, char* src);
 /**
  * FUNCTIONS: _add_to_buffer
  * 
- * DESCRIPTION: Private function that takes a pointer to a global malloc buffer and
+ * @brief: Private function that takes a pointer to a global malloc buffer and
  * 	dynamically expands it to support an additional string.
  * 
- * PARAM: dst - Pointer to the global buffer
- * PARAM: src - Pointer to a char* buffer to be appended to the global buffer
+ * @param dst - Pointer to the global buffer
+ * @param src - Pointer to a char* buffer to be appended to the global buffer
 */
 void _add_to_buffer(char** dst, char* src){
 	int size;
@@ -47,19 +54,17 @@ void _add_to_buffer(char** dst, char* src){
 }
 
 /**
- * FUNCTION: printf_mock
- * 
- * DESCRIPTION: This function will act as a mock for printf which takes in a string and
+ * @brief: This function will act as a mock for printf which takes in a string and
  * 	will add it to a global buffer which can be checked in a test case. Optionally, it
  * 	can still print the incoming string.
  * 
- * PARAM: print - Flag which determines if the incoming string should be printed
- * PARAM: format - String format, same as printf
- * PARAM: ... - Arguments for the printf function
+ * @param print - Flag which determines if the incoming string should be printed
+ * @param format - String format, same as printf
+ * @param ... - Arguments for the printf function
  * 
- * RETURNS: Returns 0 if no error, else 1
+ * @return Returns 0 if no error, else 1
 */
-int printf_mock(int print, char* format, ...){
+int printf_mock(int print, const char* format, ...){
 	if(format == nullptr) return 1;
 	char buffer[512] = {0};
 	
@@ -72,6 +77,56 @@ int printf_mock(int print, char* format, ...){
 	
 	va_end(args);
 	return 0;
+}
+
+/**
+ * @brief Mocks the getdatetime function
+ * 
+ * @return Pointer to a mocked output 
+ */
+char** getdatetime_mock(CLIENT* clnt){
+	CHECK_EQUAL_C_POINTER(clnt, (CLIENT*)1);
+	return (char**)&GET_DATETIME_MOCK_RETVAL;
+}
+
+/**
+ * @brief Mocks the getdatetime function
+ * 
+ * @return Pointer to a mocked output 
+ */
+struct sysinfo* getsysteminfo_mock(CLIENT* clnt){
+	CHECK_EQUAL_C_POINTER(clnt, (CLIENT*)1);
+	return (struct sysinfo*)&GET_SYSTEM_INFO_MOCK_RETVAL;
+}
+
+/**
+ * @brief Mocks the getmemoryutilization function
+ * 
+ * @return Pointer to a mocked output 
+ */
+struct mem_usage_ret* getmemoryutilization_mock(CLIENT* clnt){
+	CHECK_EQUAL_C_POINTER(clnt, (CLIENT*)1);
+	return (struct mem_usage_ret*)&GET_MEMORY_UTILIZATION_MOCK_RETVAL;
+}
+
+/**
+ * @brief Mocks the getloadsperminute function
+ * 
+ * @return Pointer to a mocked output 
+ */
+double* getloadprocsperminute_mock(CLIENT* clnt){
+	CHECK_EQUAL_C_POINTER(clnt, (CLIENT*)1);
+	return (double*)GET_LOAD_PROCS_PER_MINUTE_MOCK_RETVAL;
+}
+
+/**
+ * @brief Mocks the getusernames function
+ * 
+ * @return Pointer to a mocked output 
+ */
+struct user_info* getusernames_mock(CLIENT* clnt){
+	CHECK_EQUAL_C_POINTER(clnt, (CLIENT*)1);
+	return (struct user_info*)&GET_USERNAMES_MOCK_RETVAL;
 }
 
 /* CPPUTESTS */
@@ -92,7 +147,7 @@ TEST_C(mock_functions_tests, printf_mock_test_noargs){
 }
 
 TEST_C(mock_functions_tests, printf_mock_test_args_multiple_lines){
-	char* expected_string = "Name: John Doe\nAge: 55 | FavNum: 0xB00B\n";
+	const char* expected_string = "Name: John Doe\nAge: 55 | FavNum: 0xB00B\n";
 	printf("Name: %s\n", "John Doe");
 	printf("Age: %d | FavNum: 0x%X\n", 55, 0xB00B);
 	CHECK_EQUAL_C_STRING(PRINTF_TEST_BUFFER, expected_string);
@@ -100,7 +155,7 @@ TEST_C(mock_functions_tests, printf_mock_test_args_multiple_lines){
 
 /* scanf macro test */
 TEST_C(mock_functions_tests, scanf_one_argument){
-	char* test_string = "Ryan";
+	const char* test_string = "Ryan";
 	strcpy(SCANF_TEST_BUFFER, test_string);
 	char name[10];
 	scanf("%s", name);
@@ -108,7 +163,7 @@ TEST_C(mock_functions_tests, scanf_one_argument){
 }
 
 TEST_C(mock_functions_tests, scanf_one_multiple_arguments){
-	char* test_string = "Ryan Lanciloti 24 ";
+	const char* test_string = "Ryan Lanciloti 24 ";
 	strcpy(SCANF_TEST_BUFFER, test_string);
 	char first[10];
 	char last[10];

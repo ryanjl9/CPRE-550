@@ -39,7 +39,7 @@ sys_monitor_1(struct svc_req *rqstp, register SVCXPRT *transp)
 
 	case GetSystemInfo:
 		_xdr_argument = (xdrproc_t) xdr_void;
-		_xdr_result = (xdrproc_t) xdr_sysinfo;
+		_xdr_result = (xdrproc_t) xdr_sysinfo_c;
 		local = (char *(*)(char *, struct svc_req *)) getsysteminfo_1_svc;
 		break;
 

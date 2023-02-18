@@ -17,9 +17,11 @@ extern "C" {
 
 typedef double load_procs_ret[3];
 
-typedef char *user_list_t;
+typedef char *user_name_t;
 
-struct sysinfo {
+typedef user_name_t *user_list_t;
+
+struct sysinfo_c {
 	long uptime;
 	u_long loads[3];
 	u_long totalram;
@@ -31,9 +33,9 @@ struct sysinfo {
 	u_short procs;
 	char _f[22];
 };
-typedef struct sysinfo sysinfo;
+typedef struct sysinfo_c sysinfo_c;
 
-struct mallinfo {
+struct mallinfo_c {
 	int arena;
 	int ordblks;
 	int smblks;
@@ -45,10 +47,10 @@ struct mallinfo {
 	int fordblks;
 	int keepcost;
 };
-typedef struct mallinfo mallinfo;
+typedef struct mallinfo_c mallinfo_c;
 
 struct mem_usage_ret {
-	struct mallinfo dynamic_memory_usage;
+	struct mallinfo_c dynamic_memory_usage;
 	int page_size;
 	long phys_page_cnt;
 	long available_phys_page_cnt;
@@ -84,8 +86,8 @@ typedef enum load_time_map_t load_time_map_t;
 extern  char ** getdatetime_1(enum dt_ops_t *, CLIENT *);
 extern  char ** getdatetime_1_svc(enum dt_ops_t *, struct svc_req *);
 #define GetSystemInfo 2
-extern  struct sysinfo * getsysteminfo_1(void *, CLIENT *);
-extern  struct sysinfo * getsysteminfo_1_svc(void *, struct svc_req *);
+extern  struct sysinfo_c * getsysteminfo_1(void *, CLIENT *);
+extern  struct sysinfo_c * getsysteminfo_1_svc(void *, struct svc_req *);
 #define GetMemoryUtilization 3
 extern  struct mem_usage_ret * getmemoryutilization_1(void *, CLIENT *);
 extern  struct mem_usage_ret * getmemoryutilization_1_svc(void *, struct svc_req *);
@@ -102,8 +104,8 @@ extern int sys_monitor_1_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
 extern  char ** getdatetime_1();
 extern  char ** getdatetime_1_svc();
 #define GetSystemInfo 2
-extern  struct sysinfo * getsysteminfo_1();
-extern  struct sysinfo * getsysteminfo_1_svc();
+extern  struct sysinfo_c * getsysteminfo_1();
+extern  struct sysinfo_c * getsysteminfo_1_svc();
 #define GetMemoryUtilization 3
 extern  struct mem_usage_ret * getmemoryutilization_1();
 extern  struct mem_usage_ret * getmemoryutilization_1_svc();
@@ -120,9 +122,10 @@ extern int sys_monitor_1_freeresult ();
 
 #if defined(__STDC__) || defined(__cplusplus)
 extern  bool_t xdr_load_procs_ret (XDR *, load_procs_ret);
+extern  bool_t xdr_user_name_t (XDR *, user_name_t*);
 extern  bool_t xdr_user_list_t (XDR *, user_list_t*);
-extern  bool_t xdr_sysinfo (XDR *, sysinfo*);
-extern  bool_t xdr_mallinfo (XDR *, mallinfo*);
+extern  bool_t xdr_sysinfo_c (XDR *, sysinfo_c*);
+extern  bool_t xdr_mallinfo_c (XDR *, mallinfo_c*);
 extern  bool_t xdr_mem_usage_ret (XDR *, mem_usage_ret*);
 extern  bool_t xdr_user_info (XDR *, user_info*);
 extern  bool_t xdr_dt_ops_t (XDR *, dt_ops_t*);
@@ -130,9 +133,10 @@ extern  bool_t xdr_load_time_map_t (XDR *, load_time_map_t*);
 
 #else /* K&R C */
 extern bool_t xdr_load_procs_ret ();
+extern bool_t xdr_user_name_t ();
 extern bool_t xdr_user_list_t ();
-extern bool_t xdr_sysinfo ();
-extern bool_t xdr_mallinfo ();
+extern bool_t xdr_sysinfo_c ();
+extern bool_t xdr_mallinfo_c ();
 extern bool_t xdr_mem_usage_ret ();
 extern bool_t xdr_user_info ();
 extern bool_t xdr_dt_ops_t ();

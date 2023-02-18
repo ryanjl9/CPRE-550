@@ -10,15 +10,37 @@
 #include "console_helper.h"
 
 /* GLOBAL STATE VARIABLES */
-char* INTRO_MSG = nullptr;
+char INTRO_MSG[INTRO_MSG_SIZE] = {0};
 menu_item_t* MENU_ITEMS = nullptr;
 uint8_t ITEM_CNT = 0;
 
 /* ERROR MESSAGES */
 const char* NULL_INTRO_MESSAGE = \
-	"Introduction message not specified. Make sure to call ch_init().";
+	"Introduction message not specified. Make sure to call ch_init().\n";
+const char* OVERSIZED_INTRO_MESSAGE = \
+	"Introduction message provided is too large.\n";
+const char* NO_MENU_ITEMS = \
+	"There are no commands registered.\n";
+const char* NO_SUB_COMMND = \
+	"Provided command does not have any subcommands.\n";
+const char* BAD_COMMAND = \
+	"The provided command could not be found.\n";
+const char* BAD_ARGS = \
+	"The number of arguments provided are incorrect. Please see the "
+	" help menu for more info.\n";
 
 /* PRIVATE FUNCTION HEADERS */
+/**
+ * @brief: This is a helper function which can be used to traverse the command menu
+ * 	recursively
+ * 
+ * @param cmd_name_lst - Command list
+ * @param args_cnt - Number of arguments in the command list
+ * @param cur_menu - Current menu that we are checking the command to exist in
+ * @param menu_size - The number of entries in the current menu
+ * 
+ * @return Consult the enum ch_execute_errors for decoding the output. 
+*/
 uint8_t _ch_execute_helper(
 	char cmd_name_lst[MAX_COMMAND_ARGS][MAX_COMMAND_LINE_LEN], 
 	int args_cnt, 
@@ -27,41 +49,27 @@ uint8_t _ch_execute_helper(
 );
 
 /* FUNCTION IMPLEMENTATIONS */
-/**
- * FUNCTION: ch_init
- * 
- * DESCRIPTION: This function will initialize the 
- * 
- * PARAM: intro_msg - Message to be displayed when the app starts.
- * PARAM: menu_items - Pointer to an array of menu_items which are the valid commands we
- * 	can execute.
- * 
- * RETURNS: Consult the enum ch_init_errors for decoding the output.
-*/
+
 uint8_t ch_init(char* intro_msg, menu_item_t* menu_items, uint8_t item_cnt){
 	if(intro_msg == nullptr || menu_items == nullptr){
 		int retval = 0;
 		retval |= (intro_msg == nullptr) ? CH_INIT_INTRO_MSG_NULL : CH_INIT_NO_ERROR;
 		retval |= (menu_items == nullptr) ? CH_INIT_MENU_ITEMS_NULL : CH_INIT_NO_ERROR;
-		retval |= (item_cnt == 0) ? CH_INIT_ITEM_CNT_ZERO : CH_INIT_NO_ERROR;
+		retval |= (!item_cnt) ? CH_INIT_ITEM_CNT_ZERO : CH_INIT_NO_ERROR;
 		return retval;
 	}
-	INTRO_MSG = intro_msg;
+	if(strlen(intro_msg) >= INTRO_MSG_SIZE){
+		printf("%s", OVERSIZED_INTRO_MESSAGE);
+		return CH_INIT_BAD_INTRO_MSG;
+	}
+	strcpy(INTRO_MSG, intro_msg);
 	MENU_ITEMS = menu_items;
 	ITEM_CNT = item_cnt;
 	return CH_INIT_NO_ERROR;
 }
 
-/**
- * FUNCTION: ch_print_introduction
- * 
- * DESCRIPTION: This function will print the introduction message associated with the
- * 	Console Helper file.
- * 
- * RETURNS: 0 if successful, else 1
-*/
-uint8_t ch_print_introduction(){
-	if(INTRO_MSG == nullptr){
+uint8_t ch_print_introduction(void){
+	if(!INTRO_MSG[0]){
 		printf("%s", NULL_INTRO_MESSAGE);
 		return CH_PRINT_INTRO_MSG_NULL;
 	}
@@ -69,16 +77,6 @@ uint8_t ch_print_introduction(){
 	return CH_PRINT_INTRO_NO_ERROR;
 }
 
-/**
- * FUNCTION: ch_execute
- * 
- * DESCRIPTION: This function will parse a string and will execute the command which it
- * 	maps to.
- * 
- * PARAM: cmd - Command to be parsed
- * 
- * RETURNS: Consult the enum ch_execute_errors for decoding the output. 
-*/
 uint8_t ch_execute(char* cmd){
 	if(cmd == nullptr) return CH_EXECUTE_CMD_NULLPTR;
 	if(MENU_ITEMS == nullptr) return CH_EXECUTE_MENU_NULLPTR;
@@ -95,19 +93,6 @@ uint8_t ch_execute(char* cmd){
 	return _ch_execute_helper(split_command, num_cmd_args, MENU_ITEMS, ITEM_CNT);
 }
 
-/**
- * FUNCTION: _ch_execute_helper
- * 
- * DESCRIPTION: This is a helper function which can be used to traverse the command menu
- * 	recursively
- * 
- * PARAM: cmd_name_lst - Command list
- * PARAM: args_cnt - Number of arguments in the command list
- * PARAM: cur_menu - Current menu that we are checking the command to exist in
- * PARAM: menu_size - The number of entries in the current menu
- * 
- * RETURNS: Consult the enum ch_execute_errors for decoding the output. 
-*/
 uint8_t _ch_execute_helper(
 	char cmd_name_lst[MAX_COMMAND_ARGS][MAX_COMMAND_LINE_LEN], 
 	int args_cnt, 
@@ -122,7 +107,7 @@ uint8_t _ch_execute_helper(
 		cmd = &cur_menu[menu_entry];
 		if(!strcmp(cmd->cmd_name, cmd_name_lst[0])){
 			if(cur_menu[menu_entry].sub_cmds != nullptr){
-				char* token = strtok(NULL, " ");
+				strtok(NULL, " ");
 				return _ch_execute_helper(
 					&(cmd_name_lst[1]), 
 					args_cnt - 1, 
@@ -140,13 +125,62 @@ uint8_t _ch_execute_helper(
 	return CH_EXECUTE_CMD_DOESNT_EXIST;
 }
 
-/**
- * FUNCTION: ch_reset
- * 
- * DESCRIPTION: This function will clear the state variables in console_helper
-*/
-void ch_reset(){
-	INTRO_MSG = nullptr;
+void ch_reset(void){
+	memset(INTRO_MSG, 0, sizeof(INTRO_MSG));
 	MENU_ITEMS = nullptr;
 	ITEM_CNT = 0;
+}
+
+void ch_help(char* args[MAX_COMMAND_LINE_LEN], int acnt){
+	if(MENU_ITEMS == nullptr){
+		printf("%s", NO_MENU_ITEMS);
+		return;
+	}
+	
+	menu_item_t* current_menu = MENU_ITEMS;
+	int menu_size = ITEM_CNT;
+	int index, cmd_depth;
+	char params[MAX_COMMAND_ARGS][MAX_COMMAND_LINE_LEN];
+	for(index = 0; index < acnt; index++){
+		strcpy(params[index], GET_PARAM_X(args, index));
+	}
+
+	for(cmd_depth = 0; cmd_depth < acnt; cmd_depth++){
+		for(index = 0; index < menu_size; index++){
+			if(!strcmp(current_menu[index].cmd_name, params[cmd_depth])){
+				if(current_menu[index].sub_cmds == nullptr){
+					printf("%s", NO_SUB_COMMND);
+					return;
+				}
+				menu_size = current_menu[index].sub_cmd_cnt;
+				current_menu = current_menu[index].sub_cmds;
+				break;
+			}
+		}
+		if(index == menu_size){
+			printf("%s", BAD_COMMAND);
+			return;
+		}
+	}
+
+	for(index=0; index < menu_size; index++){
+		if(current_menu[index].sub_cmds != nullptr){ 
+			printf(
+				"%s* - %s\n", current_menu[index].cmd_name, current_menu[index].cmd_desc
+			);
+		}else{ 
+		printf(
+			"%s - %s\n", current_menu[index].cmd_name, current_menu[index].cmd_desc
+		);
+		}
+	}
+	printf("\n");
+}
+
+void ch_quit(char* args[MAX_COMMAND_LINE_LEN], int acnt){
+	(void)args;
+	if(acnt != 0){
+		printf("%s", BAD_ARGS);
+	}
+	exit(0);
 }
