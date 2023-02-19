@@ -9,4 +9,3 @@ The purpose of this project is to design a system which can monitor statistics o
 - CPU utilization
 - Memory usage
 - Loaded processes per minute
-- Users currently logged in
