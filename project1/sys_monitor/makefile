@@ -83,13 +83,10 @@ objs_dir:
 .PHONY: all
 all: client server
 
+ifneq "$(CPPUTEST_HOME)" ""
 .PHONY: test
 test:
-ifneq "$(CPPUTEST_HOME)" ""
 	@make -f tests/testingmakefile
-else
-$(error The environment variable CPPUTEST_HOME is not set. \
-Set it to where cpputest is installed)
 endif
 
 .PHONY: clean
