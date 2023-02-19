@@ -81,18 +81,29 @@ objs_dir:
 	mkdir -p $(OBJ_DIR)
 
 .PHONY: all
-all: test client server
+all: client server
 
 .PHONY: test
 test:
+ifneq "$(CPPUTEST_HOME)" ""
 	@make -f tests/testingmakefile
+else
+$(error The environment variable CPPUTEST_HOME is not set. \
+Set it to where cpputest is installed)
+endif
 
 .PHONY: clean
 clean: 
 	@rm -rf $(OBJ_DIR) $(BIN_DIR) $(LIB_DIR)
+	
+ifneq "$(CPPUTEST_HOME)" ""
 	@make -f tests/testingmakefile realclean
+endif
 
 .PHONY: clean-verbose
 clean-verbose: 
 	rm -rf $(OBJ_DIR) $(BIN_DIR) $(LIB_DIR)
+	
+ifneq "$(CPPUTEST_HOME)" ""
 	make -f tests/testingmakefile realclean
+endif
