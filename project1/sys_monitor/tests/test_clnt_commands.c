@@ -37,10 +37,9 @@ TEST_GROUP_C_SETUP(clnt_commands_tests){
 	SERVER_CNT = 0;
 	CUR_SVR_INDEX = 0;
 	memset(GET_DATETIME_MOCK_RETVAL, 0, sizeof(char) * GETDATETIME_MOCK_RETVAL_SIZE);
-	memset(&GET_SYSTEM_INFO_MOCK_RETVAL, 0, sizeof(struct sysinfo));
+	memset(&GET_SYSTEM_INFO_MOCK_RETVAL, 0, sizeof(struct sysinfo_c));
 	memset(&GET_MEMORY_UTILIZATION_MOCK_RETVAL, 0, sizeof(struct mem_usage_ret));
 	memset(&GET_LOAD_PROCS_PER_MINUTE_MOCK_RETVAL, 0, sizeof(double));
-	memset(&GET_USERNAMES_MOCK_RETVAL, 0, sizeof(struct user_info));
 	CLEAR_BUFFER(PRINTF_TEST_BUFFER)
 }
 
@@ -466,35 +465,5 @@ TEST_C(clnt_commands_tests, get_loadinfo_valid){
 	GET_LOAD_PROCS_PER_MINUTE_MOCK_RETVAL = retval;
 
 	get_loadinfo(nullptr, 0);
-	CHECK_EQUAL_C_STRING(expected_output, PRINTF_TEST_BUFFER);
-}
-
-/* get_usernames */
-TEST_C(clnt_commands_tests, get_usernames_bad_param){
-	get_usernames(nullptr, 1);
-	CHECK_EQUAL_C_STRING(BAD_ARGS, PRINTF_TEST_BUFFER);
-}
-
-TEST_C(clnt_commands_tests, get_usernames_no_server){
-	get_usernames(nullptr, 1);
-	CHECK_EQUAL_C_STRING(BAD_ARGS, PRINTF_TEST_BUFFER);
-}
-
-TEST_C(clnt_commands_tests, get_usernames_valid){
-	_setup_servers(1);
-	const char* expected_output = \
-		"Server 1 -> Users on the remote machine:\n"
-		"\tuser1\n"
-		"\tuser2\n"
-		"\tuser3\n"
-		"\tuser4\n\n";
-	
-	char* users[4] = {(char*)"user1", (char*)"user2", (char*)"user3", (char*)"user4"};
-	user_list_t usernames = users; 
-	struct user_info retval = {4, usernames};
-
-	GET_USERNAMES_MOCK_RETVAL = retval;
-
-	get_usernames(nullptr, 0);
 	CHECK_EQUAL_C_STRING(expected_output, PRINTF_TEST_BUFFER);
 }

@@ -24,7 +24,6 @@ enum cmds {
 	CMD_SYSINFO,
 	CMD_MEMUSG,
 	CMD_LDINFO,
-	CMD_USRINFO,
 	CMD_QUIT,
 	CMD_CNT
 };
@@ -84,11 +83,6 @@ menu_item_t commands[CMD_CNT] = {
 		"load_info",
 		"Prints the 1, 5, and 15 minute load averages on the remote PC. Ex. load_info",
 		(void*)&get_loadinfo, nullptr, 0
-	},
-	{
-		"user_info",
-		"Prints a list of all users on the remote PC. Ex. user_info",
-		(void*)&get_usernames, nullptr, 0
 	},
 	{
 		"quit", "Closes the currently running program Ex. quit", 

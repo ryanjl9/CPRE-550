@@ -32,7 +32,9 @@ _CLIENT_OBJECTS = client clnt_commands console_helper sys_monitor_clnt sys_monit
 CLIENT_OBJECTS = $(_CLIENT_OBJECTS:%=$(OBJ_DIR)/%.o)
 CLIENT_SRCS = $(_CLIENT_OBJECTS:%=$(SRC_DIR)/%.c)
 
-SERVER_OBJECTS = 
+_SERVER_OBJECTS = server sys_monitor_svc sys_monitor_xdr
+SERVER_OBJECTS = $(_SERVER_OBJECTS:%=$(OBJ_DIR)/%.o)
+SERVER_SRCS = $(_SERVER_OBJECTS:%=$(SRC_DIR)/%.c)
 
 #########################################
 #			 COMPILER FLAGS				#
@@ -64,6 +66,12 @@ client: $(CLIENT_OBJECTS) $(INCLUDE_FILES) | bin_dir
 client_dbg: $(CLIENT_SRCS) $(INCLUDE_FILES) | bin_dir
 	gcc -o $(BIN_DIR)/$@ $^ -I$(INCLUDE_DIR) $(CFLAGS) -ggdb
 
+server: $(SERVER_OBJECTS) $(INCLUDE_FILES) | bin_dir
+	gcc -o $(BIN_DIR)/$@ $^ -I$(INCLUDE_DIR) $(CFLAGS) -O2
+
+server_dbg: $(SERVER_SRCS) $(INCLUDE_FILES) | bin_dir
+	gcc -o $(BIN_DIR)/$@ $^ -I$(INCLUDE_DIR) $(CFLAGS) -ggdb
+
 .PHONY: bin_dir
 bin_dir:
 	mkdir -p $(BIN_DIR)
@@ -73,7 +81,7 @@ objs_dir:
 	mkdir -p $(OBJ_DIR)
 
 .PHONY: all
-all: test client
+all: test client server
 
 .PHONY: test
 test:

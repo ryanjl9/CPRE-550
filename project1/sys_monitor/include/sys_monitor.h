@@ -13,13 +13,8 @@
 extern "C" {
 #endif
 
-#define MAX_USERNAMES 255
 
 typedef double load_procs_ret[3];
-
-typedef char *user_name_t;
-
-typedef user_name_t *user_list_t;
 
 struct sysinfo_c {
 	long uptime;
@@ -57,17 +52,10 @@ struct mem_usage_ret {
 };
 typedef struct mem_usage_ret mem_usage_ret;
 
-struct user_info {
-	int count;
-	user_list_t user_list;
-};
-typedef struct user_info user_info;
-
 enum dt_ops_t {
 	DATE = 0,
 	TIME = 0 + 1,
 	DATE_TIME = 0 + 2,
-	_OPTION_CNT = 0 + 3,
 };
 typedef enum dt_ops_t dt_ops_t;
 
@@ -94,9 +82,6 @@ extern  struct mem_usage_ret * getmemoryutilization_1_svc(void *, struct svc_req
 #define GetLoadProcsPerMinute 4
 extern  double * getloadprocsperminute_1(void *, CLIENT *);
 extern  double * getloadprocsperminute_1_svc(void *, struct svc_req *);
-#define GetUsernames 5
-extern  struct user_info * getusernames_1(void *, CLIENT *);
-extern  struct user_info * getusernames_1_svc(void *, struct svc_req *);
 extern int sys_monitor_1_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
 
 #else /* K&R C */
@@ -112,9 +97,6 @@ extern  struct mem_usage_ret * getmemoryutilization_1_svc();
 #define GetLoadProcsPerMinute 4
 extern  double * getloadprocsperminute_1();
 extern  double * getloadprocsperminute_1_svc();
-#define GetUsernames 5
-extern  struct user_info * getusernames_1();
-extern  struct user_info * getusernames_1_svc();
 extern int sys_monitor_1_freeresult ();
 #endif /* K&R C */
 
@@ -122,23 +104,17 @@ extern int sys_monitor_1_freeresult ();
 
 #if defined(__STDC__) || defined(__cplusplus)
 extern  bool_t xdr_load_procs_ret (XDR *, load_procs_ret);
-extern  bool_t xdr_user_name_t (XDR *, user_name_t*);
-extern  bool_t xdr_user_list_t (XDR *, user_list_t*);
 extern  bool_t xdr_sysinfo_c (XDR *, sysinfo_c*);
 extern  bool_t xdr_mallinfo_c (XDR *, mallinfo_c*);
 extern  bool_t xdr_mem_usage_ret (XDR *, mem_usage_ret*);
-extern  bool_t xdr_user_info (XDR *, user_info*);
 extern  bool_t xdr_dt_ops_t (XDR *, dt_ops_t*);
 extern  bool_t xdr_load_time_map_t (XDR *, load_time_map_t*);
 
 #else /* K&R C */
 extern bool_t xdr_load_procs_ret ();
-extern bool_t xdr_user_name_t ();
-extern bool_t xdr_user_list_t ();
 extern bool_t xdr_sysinfo_c ();
 extern bool_t xdr_mallinfo_c ();
 extern bool_t xdr_mem_usage_ret ();
-extern bool_t xdr_user_info ();
 extern bool_t xdr_dt_ops_t ();
 extern bool_t xdr_load_time_map_t ();
 

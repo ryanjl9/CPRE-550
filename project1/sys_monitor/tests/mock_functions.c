@@ -18,10 +18,9 @@ char SCANF_TEST_BUFFER[MAX_COMMAND_LINE_LEN] = {0};
 int EXIT_STATUS = -1;
 
 char GET_DATETIME_MOCK_RETVAL[GETDATETIME_MOCK_RETVAL_SIZE];
-struct sysinfo GET_SYSTEM_INFO_MOCK_RETVAL;
+struct sysinfo_c GET_SYSTEM_INFO_MOCK_RETVAL;
 struct mem_usage_ret GET_MEMORY_UTILIZATION_MOCK_RETVAL;
 double* GET_LOAD_PROCS_PER_MINUTE_MOCK_RETVAL;
-struct user_info GET_USERNAMES_MOCK_RETVAL;
 
 /* PRIVATE FUNCTION HEADERS*/
 void _add_to_buffer(char** dst, char* src);
@@ -86,7 +85,8 @@ int printf_mock(int print, const char* format, ...){
  */
 char** getdatetime_mock(CLIENT* clnt){
 	CHECK_EQUAL_C_POINTER(clnt, (CLIENT*)1);
-	return (char**)&GET_DATETIME_MOCK_RETVAL;
+	static char* retval = GET_DATETIME_MOCK_RETVAL;
+	return &retval;
 }
 
 /**
@@ -94,9 +94,9 @@ char** getdatetime_mock(CLIENT* clnt){
  * 
  * @return Pointer to a mocked output 
  */
-struct sysinfo* getsysteminfo_mock(CLIENT* clnt){
+struct sysinfo_c* getsysteminfo_mock(CLIENT* clnt){
 	CHECK_EQUAL_C_POINTER(clnt, (CLIENT*)1);
-	return (struct sysinfo*)&GET_SYSTEM_INFO_MOCK_RETVAL;
+	return (struct sysinfo_c*)&GET_SYSTEM_INFO_MOCK_RETVAL;
 }
 
 /**
@@ -117,16 +117,6 @@ struct mem_usage_ret* getmemoryutilization_mock(CLIENT* clnt){
 double* getloadprocsperminute_mock(CLIENT* clnt){
 	CHECK_EQUAL_C_POINTER(clnt, (CLIENT*)1);
 	return (double*)GET_LOAD_PROCS_PER_MINUTE_MOCK_RETVAL;
-}
-
-/**
- * @brief Mocks the getusernames function
- * 
- * @return Pointer to a mocked output 
- */
-struct user_info* getusernames_mock(CLIENT* clnt){
-	CHECK_EQUAL_C_POINTER(clnt, (CLIENT*)1);
-	return (struct user_info*)&GET_USERNAMES_MOCK_RETVAL;
 }
 
 /* CPPUTESTS */

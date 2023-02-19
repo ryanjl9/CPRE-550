@@ -68,18 +68,3 @@ getloadprocsperminute_1(void *argp, CLIENT *clnt)
 	}
 	return (clnt_res);
 }
-
-struct user_info *
-getusernames_1(void *argp, CLIENT *clnt)
-{
-	static struct user_info clnt_res;
-
-	memset((char *)&clnt_res, 0, sizeof(clnt_res));
-	if (clnt_call (clnt, GetUsernames,
-		(xdrproc_t) xdr_void, (caddr_t) argp,
-		(xdrproc_t) xdr_user_info, (caddr_t) &clnt_res,
-		TIMEOUT) != RPC_SUCCESS) {
-		return (NULL);
-	}
-	return (&clnt_res);
-}

@@ -93,10 +93,6 @@ TEST_C_WRAPPER(clnt_commands_tests, get_loadinfo_bad_param)
 TEST_C_WRAPPER(clnt_commands_tests, get_loadinfo_no_server)
 TEST_C_WRAPPER(clnt_commands_tests, get_loadinfo_valid)
 
-TEST_C_WRAPPER(clnt_commands_tests, get_usernames_bad_param)
-TEST_C_WRAPPER(clnt_commands_tests, get_usernames_no_server)
-TEST_C_WRAPPER(clnt_commands_tests, get_usernames_valid)
-
 int main(int argc, char** argv){
 	return RUN_ALL_TESTS(argc, argv);
 }

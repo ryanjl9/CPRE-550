@@ -53,7 +53,6 @@ extern const char* DT_INVALID_ARG;
 	#define getsysteminfo(argp, clnt) getsysteminfo_1(argp, clnt)
 	#define getmemoryutilization(argp, clnt) getmemoryutilization_1(argp, clnt)
 	#define getloadprocsperminute(argp, clnt) getloadprocsperminute_1(argp, clnt)
-	#define getusernames(argp, clnt) getusernames_1(argp, clnt)
 #endif //_UNIT_TEST
 
 /* PUBLIC FUNCTIONS */
@@ -66,6 +65,5 @@ extern void get_datetime(char* args[MAX_COMMAND_LINE_LEN], int acnt);
 extern void get_systeminfo(char* args[MAX_COMMAND_LINE_LEN], int acnt);
 extern void get_memoryutilization(char* args[MAX_COMMAND_LINE_LEN], int acnt);
 extern void get_loadinfo(char* args[MAX_COMMAND_LINE_LEN], int acnt);
-extern void get_usernames(char* args[MAX_COMMAND_LINE_LEN], int acnt);
 
 #endif //_CLNT__COMMANDS_H

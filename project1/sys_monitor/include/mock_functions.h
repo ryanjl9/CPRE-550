@@ -18,10 +18,9 @@
 /* PUBLIC FUNCTION HEADERS */
 extern int printf_mock(int, const char*, ...);
 extern char** getdatetime_mock(CLIENT* clnt);
-struct sysinfo* getsysteminfo_mock(CLIENT* clnt);
+struct sysinfo_c* getsysteminfo_mock(CLIENT* clnt);
 struct mem_usage_ret* getmemoryutilization_mock(CLIENT* clnt);
 double* getloadprocsperminute_mock(CLIENT* clnt);
-struct user_info* getusernames_mock(CLIENT* clnt);
 
 /* PUBLIC DATA */
 extern char* PRINTF_TEST_BUFFER;
@@ -29,10 +28,9 @@ extern char SCANF_TEST_BUFFER[MAX_COMMAND_LINE_LEN];
 extern int EXIT_STATUS;
 
 extern char GET_DATETIME_MOCK_RETVAL[GETDATETIME_MOCK_RETVAL_SIZE];
-extern struct sysinfo GET_SYSTEM_INFO_MOCK_RETVAL;
+extern struct sysinfo_c GET_SYSTEM_INFO_MOCK_RETVAL;
 extern struct mem_usage_ret GET_MEMORY_UTILIZATION_MOCK_RETVAL;
 extern double* GET_LOAD_PROCS_PER_MINUTE_MOCK_RETVAL;
-extern struct user_info GET_USERNAMES_MOCK_RETVAL;
 
 /* UTILITY MACROS */
 #define CLEAR_BUFFER(buffer) if(buffer != nullptr) free(buffer); buffer = nullptr;
@@ -42,7 +40,6 @@ extern struct user_info GET_USERNAMES_MOCK_RETVAL;
 #define getsysteminfo(argp, clnt) getsysteminfo_mock(clnt)
 #define getmemoryutilization(argp, clnt) getmemoryutilization_mock(clnt)
 #define getloadprocsperminute(argp, clnt) getloadprocsperminute_mock(clnt)
-#define getusernames(argp, clnt) getusernames_mock(clnt)
 #define exit(status) EXIT_STATUS = status
 
 //Needed as printf has is redefined with macro

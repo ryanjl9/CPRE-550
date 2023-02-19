@@ -17,26 +17,6 @@ xdr_load_procs_ret (XDR *xdrs, load_procs_ret objp)
 }
 
 bool_t
-xdr_user_name_t (XDR *xdrs, user_name_t *objp)
-{
-	register int32_t *buf;
-
-	 if (!xdr_string (xdrs, objp, MAX_USERNAMES))
-		 return FALSE;
-	return TRUE;
-}
-
-bool_t
-xdr_user_list_t (XDR *xdrs, user_list_t *objp)
-{
-	register int32_t *buf;
-
-	 if (!xdr_pointer (xdrs, (char **)objp, sizeof (user_name_t), (xdrproc_t) xdr_user_name_t))
-		 return FALSE;
-	return TRUE;
-}
-
-bool_t
 xdr_sysinfo_c (XDR *xdrs, sysinfo_c *objp)
 {
 	register int32_t *buf;
@@ -275,18 +255,6 @@ xdr_mem_usage_ret (XDR *xdrs, mem_usage_ret *objp)
 	 if (!xdr_long (xdrs, &objp->phys_page_cnt))
 		 return FALSE;
 	 if (!xdr_long (xdrs, &objp->available_phys_page_cnt))
-		 return FALSE;
-	return TRUE;
-}
-
-bool_t
-xdr_user_info (XDR *xdrs, user_info *objp)
-{
-	register int32_t *buf;
-
-	 if (!xdr_int (xdrs, &objp->count))
-		 return FALSE;
-	 if (!xdr_user_list_t (xdrs, &objp->user_list))
 		 return FALSE;
 	return TRUE;
 }

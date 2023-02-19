@@ -10,16 +10,10 @@
 			- Various statistics regarding CPU utilization
 			- Various statistics regarding memory usage
 			- Information regarding the number of processes in the system run queue
-			- List of usernames currently stored on the server
 */
 
-/* CONSTANTS */
-const MAX_USERNAMES = 255;
-
 /* TYPEDEFS */
-typedef double load_procs_ret[3]; 			/* GetLoadProcsPerMinute return value */ 
-typedef string user_name_t<MAX_USERNAMES>;	/* Typedef for the usernames */
-typedef user_name_t* user_list_t;			/* Array type for the users on the remote machine */
+typedef double load_procs_ret[3]; /* GetLoadProcsPerMinute return value */ 
 
 /* STRUCTS */
 struct sysinfo_c {				/* Struct returned by sysinfo call */
@@ -55,18 +49,11 @@ struct mem_usage_ret {						/* Struct returned by GetMemoryUtilization*/
 	long available_phys_page_cnt;			/* Number of free physical pages on the remote machine */
 };
 
-struct user_info{				/* Stuct returned by GetUsernames */
-	int count;					/* Number of users */
-	user_list_t user_list;		/* Array of user names on remote machine */
-};
-
 /* ENUMS */
 enum dt_ops_t{		/* Enum used for determining what GetDateTime should return */
 	DATE = 0,		/* For getting only the date */
 	TIME,			/* For getting only the time */
-	DATE_TIME,		/* For getting both the date and time together */
-	_OPTION_CNT 	/* For getting the number of options in the enum, not */ 
-					/* meant to be an option */
+	DATE_TIME		/* For getting both the date and time together */
 };
 
 enum load_time_map_t{	/* Enum used to parse the average load times */
@@ -81,6 +68,5 @@ program SYS_MONITOR {
 		struct sysinfo_c GetSystemInfo(void) = 2;
 		struct mem_usage_ret GetMemoryUtilization(void) = 3;
 		load_procs_ret GetLoadProcsPerMinute(void) = 4;
-		struct user_info GetUsernames(void) = 5;
 	} = 1;
 } = 0x20159398;

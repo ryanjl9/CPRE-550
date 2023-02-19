@@ -1,5 +1,6 @@
 #include <linux/kernel.h>
 #include <sys/sysinfo.h>
+#include <unistd.h>
 #include <malloc.h>
 #include <stdio.h>
 #include <time.h>
@@ -7,39 +8,61 @@
 #include "proj_config.h"
 #include "sys_monitor.h"
 
-int main(int argc, char** argv){
-	struct sysinfo info;
-	struct mallinfo minfo = mallinfo();
-	int retval = sysinfo(&info);
-	
-	FILE* passwd_file = fopen("/etc/passwd", "r");
-	struct passwd* password_lists = fgetpwent(passwd_file);
-	password_lists = fgetpwent(passwd_file);
-	return 0;
-}
+#define DT_MAX_LEN 50
 
 char** getdatetime_1_svc(enum dt_ops_t* argp, struct svc_req * clnt){
 	(void)clnt;
-	static char retval[50] = {0};
-	return nullptr;
+	static char* retval;
+	static char tmpstr[DT_MAX_LEN];
+	
+	time_t cur_time = time(0);
+	struct tm* cur_time_s = localtime(&cur_time);
+
+	switch(*argp){
+		case DATE:
+			strftime(retval, DT_MAX_LEN, "%A, %B %d, %Y", cur_time_s);
+			break;
+		case TIME:
+			strftime(retval, DT_MAX_LEN, "%T", cur_time_s);
+			break;
+		case DATE_TIME:
+			strftime(retval, DT_MAX_LEN, "%A, %B %d, %Y - %T", cur_time_s);
+			break;
+	}
+	
+	retval = &tmpstr;
+	return &retval;
 }
 
 struct sysinfo_c* getsysteminfo_1_svc(void* argp, struct svc_req* clnt){
 	(void)argp; (void)clnt;
-	return nullptr;
+	static struct sysinfo info;
+	static struct sysinfo_c retval;
+
+	sysinfo(&info);
+	memcpy(&retval, &info, sizeof(struct sysinfo_c));
+
+	return &retval;
 }
 
 struct mem_usage_ret* getmemoryutilization_1_svc(void* argp, struct svc_req* clnt){
 	(void)argp; (void)clnt;
-	return nullptr;
+	static struct mem_usage_ret retval;
+
+	struct mallinfo minfo = mallinfo();
+	memcpy(&(retval.dynamic_memory_usage), &minfo, sizeof(struct mem_usage_ret));
+	retval.page_size = getpagesize();
+	retval.phys_page_cnt = get_phys_pages();
+	retval.available_phys_page_cnt = get_avphys_pages();
+
+	return &retval;
 }
 
 double* getloadprocsperminute_1_svc(void* argp, struct svc_req* clnt){
 	(void)argp; (void)clnt;
-	return nullptr;
-}
+	static double retval[3];
 
-struct user_info* getusernames_1_svc(void* argp, struct svc_req* clnt){
-	(void)argp; (void)clnt;
-	return nullptr;
+	getloadavg(retval, 3);
+
+	return (double*)retval;
 }

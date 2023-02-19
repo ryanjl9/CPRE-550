@@ -191,7 +191,7 @@ void get_datetime(char* args[MAX_COMMAND_LINE_LEN], int acnt){
 	enum dt_ops_t dt_param_index = index;
 	char** datetime_retval;
 	datetime_retval = getdatetime(&dt_param_index, SERVERS[CUR_SVR_INDEX-1].clnt);
-	printf("%s -> %s\n", SERVERS[CUR_SVR_INDEX-1].name, (char*)datetime_retval);
+	printf("%s -> %s\n", SERVERS[CUR_SVR_INDEX-1].name, *datetime_retval);
 }
 
 /**
@@ -215,7 +215,7 @@ void get_systeminfo(char* args[MAX_COMMAND_LINE_LEN], int acnt){
 		printf("%s", NO_SERVER_SELECTED);
 		return;
 	}
-	struct sysinfo* systeminfo = getsysteminfo(nullptr, SERVERS[CUR_SVR_INDEX-1].clnt);
+	struct sysinfo_c* systeminfo = getsysteminfo(nullptr, SERVERS[CUR_SVR_INDEX-1].clnt);
 	printf("%s -> System Info:\n\tUptime (seconds): %ld\n\tNumber of Processes: %hu\n\n", 
 		SERVERS[CUR_SVR_INDEX-1].name, systeminfo->uptime, systeminfo->procs);
 }
@@ -292,33 +292,4 @@ void get_loadinfo(char* args[MAX_COMMAND_LINE_LEN], int acnt){
 		SERVERS[CUR_SVR_INDEX-1].name, 
 		retval[ONE_MINUTE], retval[FIVE_MINUTE], retval[FIFTEEN_MINUTE]
 	);
-}
-
-/**
- * @brief When called, this function will get a struct containing a list of all username on the
- *  remote system.
- * 
- * @param args Array containing arguments for the the function
- * @param acnt Arguments count
- * 
- * @example user_info
- */
-void get_usernames(char* args[MAX_COMMAND_LINE_LEN], int acnt){
-	(void)args;
-	if(acnt != 0){
-		printf("%s", BAD_ARGS);
-		return;
-	}
-	if(!CUR_SVR_INDEX){
-		printf("%s", NO_SERVER_SELECTED);
-		return;
-	}
-	int index;
-	struct user_info* retval = getusernames(nullptr, SERVERS[CUR_SVR_INDEX-1].clnt);
-	
-	printf("%s -> Users on the remote machine:\n", SERVERS[CUR_SVR_INDEX-1].name);
-	for(index = 0; index < retval->count; index++){
-		printf("\t%s\n", retval->user_list[index]);
-	}
-	printf("\n");
 }
