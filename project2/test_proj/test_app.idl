@@ -1,0 +1,13 @@
+module com{
+	module cpre550 {
+		module project2{
+			module test_proj {
+				interface TestInterface {
+					const unsigned short SIZE = 32;
+					unsigned long get_index(in unsigned short index);
+					void set_index(in unsigned short index, in unsigned long val);
+				};
+			};
+		};
+	};
+};

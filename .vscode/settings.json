@@ -1,0 +1,11 @@
+{
+	"java.project.referencedLibraries": [
+		"lib/**/*.jar"
+	],
+	"java.configuration.updateBuildConfiguration": "automatic",
+	"java.project.sourcePaths": [
+		"project2/restaurant-parent/common/src/main/java",
+		"project2/restaurant-parent/client/src/main/java",
+		"project2/restaurant-parent/server/src/main/java"
+	]
+}

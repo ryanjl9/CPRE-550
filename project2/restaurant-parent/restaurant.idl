@@ -1,0 +1,20 @@
+module com{
+	module cpre550 {
+		module project2{
+			module restaurant {
+				module common {
+					interface Customer {
+						string view_menu();
+						string place_order(in string order);
+						string check_order_status(in string username);
+					};
+					interface Manager {
+						string connect();
+						void keepalive(in string token);
+						string view_current_orders();
+					};
+				};
+			};
+		};
+	};
+};
