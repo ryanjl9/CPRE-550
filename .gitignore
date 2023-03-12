@@ -58,6 +58,7 @@ dkms.conf
 
 # Java
 **/*.class
-**/*.jar
+# **/*.jar
 **/*.lst
-**/target
+**/surefire-reports
+**/maven-archiver
