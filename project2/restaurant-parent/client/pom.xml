@@ -47,7 +47,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>com.cpre550.project2.test_proj.Client</mainClass>
+							<mainClass>com.cpre550.project2.restaurant.client.Client</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>

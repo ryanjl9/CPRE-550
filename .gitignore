@@ -55,3 +55,9 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Java
+**/*.class
+**/*.jar
+**/*.lst
+**/target

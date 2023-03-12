@@ -27,6 +27,11 @@
       <version>${revision}</version>
       <scope>compile</scope>
     </dependency>
+		<dependency>
+			<groupId>org.javatuples</groupId>
+			<artifactId>javatuples</artifactId>
+			<version>1.2</version>
+	</dependency>
   </dependencies>
 
   <build>
@@ -47,7 +52,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>com.cpre550.project2.test_proj.Server</mainClass>
+							<mainClass>com.cpre550.project2.restaurant.server.Server</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>
