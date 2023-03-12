@@ -9,3 +9,7 @@ The purpose of this project is to design a system which can monitor statistics o
 - CPU utilization
 - Memory usage
 - Loaded processes per minute
+
+## Project 2: Restaurant Application Using CORBA
+
+The purpose of this project is to mimic the interface a restaurant may implement that allows their customers and managers to place orders and view orders respectively.
