@@ -2,7 +2,7 @@
 
 ## How to build
 
-This project uses maven as a build system to make the two jar files that make up this project. This uses Java 1.8 for it's runtime. To build the project, in the restaurant-parent folder, run the following command: `./mvnw clean package`. This will create two jar files, `server.jar` and `client.jar` in the `server/target` and `client/target` folders respectively.
+This project uses maven as a build system to make the two jar files that make up this project. This uses Java 1.8 for it's runtime. To build the project, in the restaurant-parent folder, run the following command: `mvn clean package`. This will create two jar files, `server.jar` and `client.jar` in the `server/target` and `client/target` folders respectively.
 
 ## How to run the server
 

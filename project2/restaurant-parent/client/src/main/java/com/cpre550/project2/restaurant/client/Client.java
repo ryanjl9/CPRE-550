@@ -43,7 +43,7 @@ public class Client{
 			System.out.print("> ");
 			ui.parse_cmd(scanner.nextLine());
 		}
-		daemon.kill();
+		if(daemon != null) daemon.kill();
 		scanner.close();
     }
 
